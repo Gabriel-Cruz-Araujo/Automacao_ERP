@@ -13,7 +13,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 kommo_user = os.getenv("KOMMO_USERNAME")
 kommo_password = os.getenv("KOMMO_PASSWORD")
-
+url_kommo = os.getenv("KOMMO_URL")
+url_olist = ""
 
 chrome_options = Options()
 chrome_options.add_argument("--icognito")
@@ -21,8 +22,6 @@ chrome_options.add_argument("--disable-notifications")
 chrome_options.add_argument("--disable-infobars")
 
 def qualificar_clientes():
-    url_kommo = "https://extratosaracaju.kommo.com/" #colocar em variavel de ambiente
-    url_olist = ""
     
     driver = webdriver.Chrome(options=chrome_options)
     
@@ -34,12 +33,12 @@ def qualificar_clientes():
     
     # login_username_kommo = driver.find_element(by=By.XPATH, value="/html/body/div/div[1]/div/div[1]/span/input")
     login_username_kommo = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "/html/body/div/div[1]/div/div[1]/span/input")))
-    login_username_kommo.send_keys("adm@extratosaracaju.com")
+    login_username_kommo.send_keys(kommo_user)
     
     time.sleep(1)
 
     login_password_kommo = driver.find_element(by=By.ID, value="password")
-    login_password_kommo.send_keys("A123456a@")
+    login_password_kommo.send_keys(kommo_password)
     
     login_button_kommo = driver.find_element(by=By.CSS_SELECTOR, value="#auth_submit")
     login_button_kommo.click()
