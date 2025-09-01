@@ -1,6 +1,7 @@
 import os
 import time
 from dotenv import load_dotenv
+from tiny_api import obter_tipo_contato_por_cpf
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -97,19 +98,26 @@ def qualificar_clientes():
                 print(f"O CPF é: {cpf_lead_txt}")
             except NoSuchElementException:
                 print("Não foi encontrado cpf para este cliente")
+             
+            # cnpj_lead_txt = None
                 
-            try:
-                cnpj_lead = driver.find_element(by=By.XPATH, value="")
-                cnpj_lead_txt = cnpj_lead.get_attribute()
-            except NoSuchElementException:
-                print("Não foi encontrado cnpj para este cliente")
+            # try:
+            #     cnpj_lead = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[1]/div[2]/div/div[1]/ul/li/form/div[2]/div[4]/div[1]/div[2]/div/div[3]/div/input")
+            #     cnpj_lead_txt = cnpj_lead.get_attribute()
+            # except NoSuchElementException:
+            #     print(f"O CNPJ é: {cnpj_lead_txt}")
+            #     print("Não foi encontrado cnpj para este cliente")
+            
             
             #========================================== Definindo se e cliente final ou profissional ====================================
-            #Coloque aqui a lógica.
-            #- Acessar a Olist (por meio de api ou etc).
-            #- Pesquisar pelo cpf do cliente e suas tags.
-            #- Se ele for cliente profissional ou final enviar para seu funil especifico.
+            #O código faz acesso a api do Olist v2(Não e a mais recente, possui a v3) para 
+            #pegar a tag do cliente e verificar se ele e um cliente profissional ou Final
+            #para assim da segmento ao fluxo do robô.
             
+            tipo_contato = obter_tipo_contato_por_cpf(cpf_lead_txt)
+            print(f"Tipo de contato do cliente: {tipo_contato}")
+            
+            #=============================================================================================================================
             
             qualify_lead = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[1]/div[1]/form/div/div[1]/div[3]/div/div/div[1]/div/div/div/div[2]")
             qualify_lead.click()
