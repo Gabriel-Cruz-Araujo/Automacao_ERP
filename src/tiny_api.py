@@ -1,11 +1,14 @@
 # tiny_api.py
 import os
 import requests
+from dotenv import load_dotenv
 
+load_dotenv()
 # -----------------------------
 # Configuração do token via variável de ambiente
 # -----------------------------
 TOKEN = os.getenv("TINY_API_TOKEN")
+
 if not TOKEN:
     raise ValueError("O token da API do Tiny não está definido na variável de ambiente 'TINY_API_TOKEN'.")
 
