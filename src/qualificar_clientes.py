@@ -1,10 +1,10 @@
 import os
 import time
 from dotenv import load_dotenv
-from tiny_api import obter_tipo_contato_por_cpf
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from tiny_api import obter_tipo_contato_por_cpf
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -12,9 +12,12 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 
+load_dotenv()
+
 kommo_user = os.getenv("KOMMO_USERNAME")
 kommo_password = os.getenv("KOMMO_PASSWORD")
 url_kommo = os.getenv("KOMMO_URL")
+print(url_kommo)
 url_olist = ""
 
 chrome_options = Options()
@@ -32,7 +35,6 @@ def qualificar_clientes():
     #================================= Login ===============================================
     time.sleep(5)
     
-    # login_username_kommo = driver.find_element(by=By.XPATH, value="/html/body/div/div[1]/div/div[1]/span/input")
     login_username_kommo = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "/html/body/div/div[1]/div/div[1]/span/input")))
     login_username_kommo.send_keys(kommo_user)
     
@@ -51,7 +53,7 @@ def qualificar_clientes():
     except TimeoutException:
         print("Nenhum poupup encontrado")
         
-    #================================== Leads ================================================
+    #================================== Leads ==================================================================
     btn_leads = driver.find_element(by=By.XPATH, value="/html/body/div[1]/div[6]/div/div/div[2]/a")
     btn_leads.click()
     time.sleep(1)
@@ -66,12 +68,12 @@ def qualificar_clientes():
     btn_select_base_leads = driver.find_element(by=By.CSS_SELECTOR, value="li.aside__list-item:nth-child(2) > a:nth-child(1)")
     btn_select_base_leads.click()
     time.sleep(3)
-    #=============================================== Fazendo um Filtro somente para meu usuário ===============================================    
+    #================================== Fazendo um Filtro somente para meu usuário =============+================    
     filter_box = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[1]/div/div/div/div[1]/div[3]/div[2]/div[2]/input")
     filter_box.click()
     time.sleep(1)
     
-    select_filters_1 = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[1]/div/div/div/div[1]/div[4]/div[3]/div[1]/div/div[2]/form/div[2]/div/ul[2]/li[7]/div[1]")
+    select_filters_1 = driver.find_element(by=By.CSS_SELECTOR, value="li.tags-lib__item:nth-child(6) > div:nth-child(1)")
     select_filters_1.click()
     time.sleep(1)
     
@@ -86,12 +88,17 @@ def qualificar_clientes():
     
     apply_filters = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[1]/div/div/div/div[1]/div[4]/div[3]/div[3]/button[1]")
     apply_filters.click()
-    time.sleep(1)
+    time.sleep(3)
     
     while True:
         try:
             first_lead = driver.find_element(By.XPATH, "(//a[@class='js-navigate-link list-row__template-name__table-wrapper__name-link'])[1]")
             first_lead.click()
+            time.sleep(2)
+            
+            cpf_lead_txt = None
+            cnpj_lead_txt = None
+            
             try:
                 cpf_lead = driver.find_element(by=By.XPATH, value="//input[@class='control--suggest--input js-control--suggest--input-ajax linked-form__cf js-legal-entity-vat legal-entity__item-mini-input js-control-allow-numeric control-price_autosized']")
                 cpf_lead_txt = cpf_lead.get_attribute("value")
@@ -99,39 +106,75 @@ def qualificar_clientes():
             except NoSuchElementException:
                 print("Não foi encontrado cpf para este cliente")
              
-            # cnpj_lead_txt = None
+           
+            if not cpf_lead_txt:
+                try:
+                    cnpj_lead = driver.find_element(By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[1]/div[2]/div/div[1]/ul/li/form/div[2]/div[4]/div[1]/div[2]/div/div[3]/div/input")
+                    cnpj_lead_txt = cnpj_lead.get_attribute("value")
+                    print(f"O CNPJ é: {cnpj_lead_txt}")
+                except NoSuchElementException:
+                    print("Não foi encontrado CNPJ para este cliente")
+            
+            if not cpf_lead_txt and not cnpj_lead_txt:
+                print("Nenhum CPF ou CNPJ encontrado → executando fluxo específico")
+                qualify_lead = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[1]/div[1]/form/div/div[1]/div[3]/div/div/div[1]/div/div/div/div[2]")
+                qualify_lead.click()
+                time.sleep(2)
                 
-            # try:
-            #     cnpj_lead = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[1]/div[2]/div/div[1]/ul/li/form/div[2]/div[4]/div[1]/div[2]/div/div[3]/div/input")
-            #     cnpj_lead_txt = cnpj_lead.get_attribute()
-            # except NoSuchElementException:
-            #     print(f"O CNPJ é: {cnpj_lead_txt}")
-            #     print("Não foi encontrado cnpj para este cliente")
+                send_to_hopper_Home_care = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(1) > label:nth-child(2)")
+                send_to_hopper_Home_care.click()
+                time.sleep(2)
+                
+                save_changes = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[2]/button[1]/span/span")    
+                save_changes.click()
+                time.sleep(2)
+                
+                back_to_qualify = driver.find_element(by=By.CSS_SELECTOR, value=".js-back-button")
+                back_to_qualify.click()
+                time.sleep(4)
+            else:
+                # Se encontrou CPF ou CNPJ, seguir fluxo normal
+                print("Cliente possui CPF ou CNPJ → seguindo fluxo normal")
             
+                #========================================== Definindo se e cliente final ou profissional ====================================
+                #O código faz acesso a api do Olist v2(Não e a mais recente, possui a v3) para 
+                #pegar a tag do cliente e verificar se ele e um cliente profissional ou Final
+                #para assim da segmento ao fluxo do robô.
             
-            #========================================== Definindo se e cliente final ou profissional ====================================
-            #O código faz acesso a api do Olist v2(Não e a mais recente, possui a v3) para 
-            #pegar a tag do cliente e verificar se ele e um cliente profissional ou Final
-            #para assim da segmento ao fluxo do robô.
-            
-            tipo_contato = obter_tipo_contato_por_cpf(cpf_lead_txt)
-            print(f"Tipo de contato do cliente: {tipo_contato}")
-            
-            #=============================================================================================================================
-            
-            qualify_lead = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[1]/div[1]/form/div/div[1]/div[3]/div/div/div[1]/div/div/div/div[2]")
-            qualify_lead.click()
-            
-            send_to_hopper = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(2) > label:nth-child(2)")
-            send_to_hopper.click()
-
-            save_changes = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[2]/button[1]/span/span")    
-            save_changes.click()
-            
-            back_to_qualify = driver.find_element(by=By.CSS_SELECTOR, value=".js-back-button")
-            back_to_qualify.click()
+                tipo_contato = obter_tipo_contato_por_cpf(cpf_lead_txt)
+                print(f"Tipo de contato do cliente: {tipo_contato}")
+                
+                #=============================================================================================================================
+                
+                #============================================ Definindo o fluxo do lead =================================================
+                qualify_lead = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[1]/div[1]/form/div/div[1]/div[3]/div/div/div[1]/div/div/div/div[2]")
+                qualify_lead.click()
+                time.sleep(1)
+                
+                if tipo_contato == "Cliente profissional":
+                    send_to_hopper_profissional = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(3) > label:nth-child(2)")
+                    send_to_hopper_profissional.click()
+                    time.sleep(2)
+                    
+                elif tipo_contato == "Cliente Home Care":
+                    send_to_hopper_Home_care = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(1) > label:nth-child(2)")
+                    send_to_hopper_Home_care.click()
+                    time.sleep(2)
+                else:
+                    print("Não foi identificado se ele e profissional ou Final → Definindo ele como cliente final. ")
+                    send_to_hopper_Home_care = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(1) > label:nth-child(2)")
+                    send_to_hopper_Home_care.click()
+                    time.sleep(2)
+                    
+                save_changes = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[2]/button[1]/span/span")    
+                save_changes.click()
+                time.sleep(2)
+                
+                back_to_qualify = driver.find_element(by=By.CSS_SELECTOR, value=".js-back-button")
+                back_to_qualify.click()
             
             time.sleep(4)
+            
         except NoSuchElementException:
             print("Não há mais leads disponíveis ou a lista de leads está vazia.")
             break
