@@ -3,7 +3,7 @@ import time
 import requests
 from dotenv import load_dotenv
 from selenium import webdriver
-from src.functions import formatar_cpf
+from utils.functions import formatar_cpf
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options

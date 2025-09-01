@@ -1,5 +1,4 @@
-from src.erp_selenium import buscar_cliente
-from src.erp_selenium import chamada_pela_api
+from src.selenium_bot.qualificar_clientes import qualificar_clientes
 
 
-buscar_cliente()
+qualificar_clientes()

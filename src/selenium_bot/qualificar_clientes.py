@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from tiny_api import obter_tipo_contato_por_cpf
+from src.api.tiny_api import obter_tipo_contato_por_cpf
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
