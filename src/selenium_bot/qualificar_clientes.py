@@ -22,7 +22,7 @@ url_olist = ""
 
 chrome_options = Options()
 chrome_options.add_argument("--icognito")
-# chrome_options.add_argument("--headless")
+#chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-notifications")
 chrome_options.add_argument("--disable-infobars")
 
@@ -79,22 +79,30 @@ def qualificar_clientes():
     filter_box.click()
     time.sleep(1)
     
-    select_filters_1 = driver.find_element(by=By.CSS_SELECTOR, value="li.tags-lib__item:nth-child(6) > div:nth-child(1)")
-    select_filters_1.click()
-    time.sleep(1)
+    # select_filters_1 = driver.find_element(by=By.CSS_SELECTOR, value="li.tags-lib__item:nth-child(6) > div:nth-child(1)")
+    # select_filters_1.click()
+    # time.sleep(1)
     
-    select_filters_2 = driver.find_element(by=By.CSS_SELECTOR, value="div.filter-search__filter__group__wrapper:nth-child(11) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > span:nth-child(2) > span:nth-child(1) > div:nth-child(1)")
-    driver.execute_script("arguments[0].scrollIntoView(true);", select_filters_2)
-    select_filters_2.click()
-    time.sleep(1)
+    # select_filters_2 = driver.find_element(by=By.CSS_SELECTOR, value="div.filter-search__filter__group__wrapper:nth-child(11) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > span:nth-child(2) > span:nth-child(1) > div:nth-child(1)")
+    # driver.execute_script("arguments[0].scrollIntoView(true);", select_filters_2)
+    # select_filters_2.click()
+    # time.sleep(1)
     
-    resp_atend = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[1]/div/div/div/div[1]/div[4]/div[3]/div[1]/div/div[2]/form/div[1]/div[1]/div/div[11]/div/div/div/div[1]/div/div[3]/label")
-    resp_atend.click()
-    time.sleep(1)
+    # resp_atend = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[1]/div/div/div/div[1]/div[4]/div[3]/div[1]/div/div[2]/form/div[1]/div[1]/div/div[11]/div/div/div/div[1]/div/div[3]/label")
+    # resp_atend.click()
+    # time.sleep(1)
     
-    apply_filters = driver.find_element(by=By.ID, value="filter_apply")
-    apply_filters.click()
-    time.sleep(3)
+    # apply_filters = driver.find_element(by=By.ID, value="filter_apply")
+    # apply_filters.click()
+    # time.sleep(3)
+    
+    filtro_qualificar = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[1]/div/div/div/div[1]/div[4]/div[3]/div[1]/div/div[1]/ul/li[7]/div/span[2]")
+    filtro_qualificar.click()
+    time.sleep(2)
+    #====================== Contadores de estatisticas ====================================    
+    total_leads = 0
+    contador_profissional = 0
+    contador_final = 0
     
     while True:
         try:
@@ -130,7 +138,7 @@ def qualificar_clientes():
                 qualify_lead.click()
                 time.sleep(3)
                 
-                send_to_hopper_Home_care = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(1)")
+                send_to_hopper_Home_care = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(2)")
                 send_to_hopper_Home_care.click()
                 time.sleep(3)
                 
@@ -141,6 +149,10 @@ def qualificar_clientes():
                 back_to_qualify = driver.find_element(by=By.CSS_SELECTOR, value=".js-back-button")
                 back_to_qualify.click()
                 time.sleep(4)
+                
+                
+                total_leads += 1
+                contador_final += 1
             else:
                 # Se encontrou CPF ou CNPJ, seguir fluxo normal
                 print("Cliente possui CPF ou CNPJ → seguindo fluxo normal")
@@ -161,19 +173,29 @@ def qualificar_clientes():
                 time.sleep(3)
                 
                 if tipo_contato == "Cliente profissional":
-                    send_to_hopper_profissional = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(4)")
+                    send_to_hopper_profissional = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(6) > label:nth-child(2)")
                     send_to_hopper_profissional.click()
                     time.sleep(4)
                     
+                    total_leads += 1
+                    contador_profissional += 1
+                    
                 elif tipo_contato == "Cliente Home Care":
-                    send_to_hopper_Home_care = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(1)")
+                    send_to_hopper_Home_care = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(2)")
                     send_to_hopper_Home_care.click()
                     time.sleep(4)
+                    
+                    total_leads += 1
+                    contador_final += 1
                 else:
                     print("Não foi identificado se ele e profissional ou Final → Definindo ele como cliente final. ")
-                    send_to_hopper_Home_care = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(1)")
+                    send_to_hopper_Home_care = driver.find_element(by=By.CSS_SELECTOR, value="div.pipeline-select:nth-child(5) > ul:nth-child(2) > li:nth-child(2)")
                     send_to_hopper_Home_care.click()                                                        
                     time.sleep(4)
+                    
+                    total_leads += 1
+                    contador_final += 1
+                    
                     
                 save_changes = driver.find_element(by=By.XPATH, value="/html/body/div[7]/div[1]/div[2]/div[1]/div[2]/button[1]/span/span")    
                 save_changes.click()
@@ -187,8 +209,14 @@ def qualificar_clientes():
         except NoSuchElementException:
             print("Não há mais leads disponíveis ou a lista de leads está vazia.")
             break
+        
+        
+    print("===== RESULTADO FINAL =====")
+    print(f"Total de leads processados: {total_leads}")
+    print(f"Clientes Profissionais: {contador_profissional}")
+    print(f"Clientes Finais (Home Care): {contador_final}")
     
-    time.sleep(500)
+    driver.quit()
     
 
 
