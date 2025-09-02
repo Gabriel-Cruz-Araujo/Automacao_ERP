@@ -78,6 +78,8 @@ TINY_API_TOKEN=""
 
 🔹O token da Tiny pode ser obtido no painel do ERP Tiny.🔹
 
+Se ainda não tiver conseguido gerar o link, siga o tutorial oficial: https://tiny.com.br/api-docs/api2-gerar-token-api.
+
 ## ▶️Como Usar
 
 Basta rodar o arquivo `main.py` após configurar as variáveis de ambiente:
